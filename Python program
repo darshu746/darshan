@@ -1,0 +1,22 @@
+import pandas as pd
+from sklearn import datasets
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score,classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+cancer=datasets.load_breast_cancer()
+cancer_data=pd.DataFrame(data=cancer.data,columns=cancer.feature_names)
+cancer_data['target']=cancer.target
+print('display the first few rows of the dataset\n',cancer_data.head())
+x=cancer_data.drop(columns=['target'])
+y=cancer_data['target']
+scaler=StandardScaler()
+x_scaled=scaler.fit_transform(x)
+x_train,x_test,y_train,y_test=train_test_split(x_scaled,y,test_size=0.2,random_state=42)
+logreg_model=LogisticRegression(random_state=42,max_iter=200)
+logreg_model.fit(x_train,y_train)
+y_pred=logreg_model.predict(x_test)
+accurecy=accuracy_score(y_test,y_pred)
+report=classification_report(y_test,y_pred,target_names=cancer.target_names)
+print(f'accuracy:{accurecy*100:2f}%')
+print('classification report:\n',report)
